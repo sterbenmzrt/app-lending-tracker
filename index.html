@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lending Tracker - Auth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+        extend: { colors: { brand: '#0f62fe', brandHover: '#0353e9' } }
+      }
+    }
+  </script>
+</head>
+<body class="bg-zinc-50 min-h-screen grid items-center justify-center p-4 text-zinc-900">
+  <main class="w-[400px] bg-white border border-zinc-200 shadow-sm rounded-md p-6">
+    <div class="mb-6 border-b border-zinc-100 pb-4">
+      <h1 class="text-xl font-bold tracking-tight">Lending Tracker</h1>
+      <p class="text-sm text-zinc-500 mt-1">Platform pencatat pinjaman barang harian.</p>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="flex space-x-4 mb-6 border-b border-zinc-200" id="auth-tabs-container">
+      <button id="tab-login" class="pb-2 text-sm font-semibold border-b-2 border-brand text-brand">Masuk</button>
+      <button id="tab-register" class="pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-800">Daftar</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" class="space-y-4 block">
+      <div>
+        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Email</label>
+        <input type="email" id="login-email" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm placeholder-zinc-400 bg-white">
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="block text-sm font-medium text-zinc-700">Password</label>
+          <button type="button" id="link-forgot" class="text-xs font-medium text-brand hover:underline">Lupa password?</button>
+        </div>
+        <input type="password" id="login-password" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+      </div>
+      <div id="login-error" class="hidden text-sm p-2.5 rounded border"></div>
+      <button type="submit" class="w-full py-2 bg-brand hover:bg-brandHover text-white text-sm font-semibold rounded-md transition-colors mt-2">Masuk</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" class="space-y-4 hidden">
+      <div>
+        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Nama Lengkap</label>
+        <input type="text" id="register-name" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Email</label>
+        <input type="email" id="register-email" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Password</label>
+        <input type="password" id="register-password" required minlength="6" class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white" placeholder="Minimal 6 karakter">
+      </div>
+      <div id="register-error" class="hidden text-sm p-2.5 rounded border"></div>
+      <button type="submit" class="w-full py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-semibold rounded-md transition-colors mt-2">Buat Akun</button>
+      <p class="text-xs text-zinc-500 mt-2 text-center">Tautan verifikasi akan dikirimkan ke email Anda setelah mendaftar.</p>
+    </form>
+
+    <!-- Forgot Password Form -->
+    <form id="forgot-form" class="space-y-4 hidden">
+      <p class="text-sm text-zinc-600">Masukkan alamat email Anda yang terdaftar.</p>
+      <div>
+        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Email</label>
+        <input type="email" id="forgot-email" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+      </div>
+      <div id="forgot-error" class="hidden text-sm p-2.5 rounded border"></div>
+      <button type="submit" class="w-full py-2 bg-brand hover:bg-brandHover text-white text-sm font-semibold rounded-md transition-colors">Reset Password</button>
+      <button type="button" id="btn-back-login" class="w-full py-2 bg-white border border-zinc-300 text-zinc-700 text-sm font-medium rounded-md hover:bg-zinc-50 mt-2">Kembali ke Login</button>
+    </form>
+  </main>
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>
