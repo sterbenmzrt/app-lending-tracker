@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lending Tracker - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body hidden" style="display: none;">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header">
+      <h2>Lending Tracker</h2>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Module navigation">
+      <a href="#" class="nav-item active" data-view="loans" role="button" aria-current="page">
+        Loans
+      </a>
+      <a href="#" class="nav-item" data-view="contacts" role="button">
+        Contacts
+      </a>
+      <a href="#" class="nav-item" data-view="inventory" role="button">
+        Inventory
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button id="btn-signout" class="btn btn-outline" style="width: 100%;" type="button">
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content" role="main">
+    <header class="content-header">
+      <h1 id="page-title">Loans</h1>
+      <button id="btn-main-action" class="btn btn-primary" type="button">+ New Loan</button>
+    </header>
+
+    <section class="content-body">
+
+      <!-- Loans View -->
+      <div id="loans-view" class="data-view" aria-labelledby="page-title">
+        <table class="data-table" aria-label="Loans table">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Borrower</th>
+              <th scope="col">Borrow Date</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="loans-tbody">
+            <tr><td colspan="6" class="text-center" style="color: var(--text-secondary);">Loading loans...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Contacts View -->
+      <div id="contacts-view" class="data-view" style="display: none;" aria-labelledby="page-title">
+        <table class="data-table" aria-label="Contacts table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contacts-tbody">
+            <tr><td colspan="3" class="text-center" style="color: var(--text-secondary);">Loading contacts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Inventory View -->
+      <div id="inventory-view" class="data-view" style="display: none;" aria-labelledby="page-title">
+        <table class="data-table" aria-label="Inventory table">
+          <thead>
+            <tr>
+              <th scope="col">Item Name</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-tbody">
+            <tr><td colspan="3" class="text-center" style="color: var(--text-secondary);">Loading inventory...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Reusable Modal Component -->
+  <div id="modal-overlay" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">Form Title</h3>
+        <button type="button" class="modal-close" id="modal-close-x" aria-label="Close dialog">&times;</button>
+      </div>
+      <div id="modal-content">
+        <!-- Dynamic form content injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Firebase Auth Guard (must run first to verify login) -->
+  <script type="module" src="js/auth.js"></script>
+  <!-- Main App Orchestration -->
+  <script type="module" src="js/app.js"></script>
+  <!-- Data Modules (loaded after auth-ready) -->
+  <script type="module" src="js/contacts.js"></script>
+  <script type="module" src="js/items.js"></script>
+  <script type="module" src="js/loans.js"></script>
+</body>
+</html>
