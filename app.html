@@ -8,6 +8,8 @@
 </head>
 <body class="app-body hidden" style="display: none;">
 
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- Sidebar Navigation -->
   <aside class="sidebar" aria-label="Main navigation">
     <div class="sidebar-header">
@@ -15,15 +17,15 @@
     </div>
 
     <nav class="sidebar-nav" aria-label="Module navigation">
-      <a href="#" class="nav-item active" data-view="loans" role="button" aria-current="page">
+      <button type="button" class="nav-item active" data-view="loans" aria-current="page">
         Loans
-      </a>
-      <a href="#" class="nav-item" data-view="contacts" role="button">
+      </button>
+      <button type="button" class="nav-item" data-view="contacts">
         Contacts
-      </a>
-      <a href="#" class="nav-item" data-view="inventory" role="button">
+      </button>
+      <button type="button" class="nav-item" data-view="inventory">
         Inventory
-      </a>
+      </button>
     </nav>
 
     <div class="sidebar-footer">
@@ -38,7 +40,7 @@
   </aside>
 
   <!-- Main Content Area -->
-  <main class="main-content" role="main">
+  <main class="main-content" id="main-content" role="main" tabindex="-1">
     <header class="content-header">
       <h1 id="page-title">Loans</h1>
       <button id="btn-main-action" class="btn btn-primary" type="button">+ New Loan</button>

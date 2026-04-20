@@ -56,22 +56,58 @@ function updateView(viewName) {
   document.getElementById('btn-main-action').textContent = cfg.action;
 }
 
-// Global modal dismissal: hides overlay and clears injected form content
-// so that the next module using the modal starts from a clean state.
+// Element that triggered the modal - we restore focus here on close (WCAG 2.4.3).
+let lastFocusedTrigger = null;
+
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function trapFocus(e) {
+  const overlay = document.getElementById('modal-overlay');
+  if (overlay.style.display !== 'flex') return;
+  if (e.key !== 'Tab') return;
+  const focusables = overlay.querySelectorAll(FOCUSABLE_SELECTOR);
+  if (focusables.length === 0) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
+
+// Global modal dismissal: hides overlay, clears injected form content,
+// and returns focus to the element that opened the modal (WCAG 2.4.3).
 export function closeModal() {
   const overlay = document.getElementById('modal-overlay');
   const content = document.getElementById('modal-content');
   overlay.style.display = 'none';
   overlay.setAttribute('aria-hidden', 'true');
   if (content) content.innerHTML = '';
+  document.removeEventListener('keydown', trapFocus);
+  if (lastFocusedTrigger && typeof lastFocusedTrigger.focus === 'function') {
+    lastFocusedTrigger.focus();
+    lastFocusedTrigger = null;
+  }
 }
 
 // Helper exposed to data modules so they can prepare the modal body.
+// Saves the currently-focused element and installs a Tab focus trap.
 export function openModal(title) {
+  lastFocusedTrigger = document.activeElement;
   document.getElementById('modal-title').textContent = title;
   const overlay = document.getElementById('modal-overlay');
   overlay.style.display = 'flex';
   overlay.setAttribute('aria-hidden', 'false');
+  document.addEventListener('keydown', trapFocus);
+  // Move focus into the modal on next tick (after content injection)
+  setTimeout(() => {
+    const first = overlay.querySelector(FOCUSABLE_SELECTOR);
+    if (first) first.focus();
+  }, 0);
 }
 
 // Lightweight toast used by every data module to confirm writes.

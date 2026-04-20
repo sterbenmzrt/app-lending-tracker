@@ -57,21 +57,36 @@ if (document.getElementById('login-form')) {
 
   const switchTabs = (isLogin) => {
     hideMsg(loginError); hideMsg(registerError); hideMsg(forgotError);
+    clearInvalid([loginForm, registerForm, forgotForm]);
     if (isLogin) {
       tabLogin.className = "pb-2 text-sm font-semibold border-b-2 border-brand text-brand";
-      tabRegister.className = "pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-800";
+      tabRegister.className = "pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-700 hover:text-zinc-900";
+      tabLogin.setAttribute('aria-selected', 'true');
+      tabRegister.setAttribute('aria-selected', 'false');
       loginForm.classList.remove('hidden');
       registerForm.classList.add('hidden');
       forgotForm.classList.add('hidden');
       tabsContainer.classList.remove('hidden');
     } else {
       tabRegister.className = "pb-2 text-sm font-semibold border-b-2 border-brand text-brand";
-      tabLogin.className = "pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-800";
+      tabLogin.className = "pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-700 hover:text-zinc-900";
+      tabRegister.setAttribute('aria-selected', 'true');
+      tabLogin.setAttribute('aria-selected', 'false');
       registerForm.classList.remove('hidden');
       loginForm.classList.add('hidden');
       forgotForm.classList.add('hidden');
       tabsContainer.classList.remove('hidden');
     }
+  };
+
+  const clearInvalid = (forms) => {
+    forms.forEach(f => f.querySelectorAll('[aria-invalid="true"]').forEach(el => el.removeAttribute('aria-invalid')));
+  };
+
+  const markInvalid = (form) => {
+    form.querySelectorAll('input[required]').forEach(el => {
+      if (!el.value) el.setAttribute('aria-invalid', 'true');
+    });
   };
 
   tabLogin.addEventListener('click', () => switchTabs(true));
@@ -105,6 +120,7 @@ if (document.getElementById('login-form')) {
       }
     } catch (error) {
       showMsg(loginError, getAuthErrorMsg(error.code), true);
+      markInvalid(loginForm);
     } finally {
       btn.textContent = originalText;
       btn.disabled = false;
@@ -142,6 +158,7 @@ if (document.getElementById('login-form')) {
 
     } catch (error) {
       showMsg(registerError, getAuthErrorMsg(error.code), true);
+      markInvalid(registerForm);
     } finally {
       btn.textContent = originalText;
       btn.disabled = false;

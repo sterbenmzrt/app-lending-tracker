@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lending Tracker - Auth</title>
+  <meta name="description" content="Login dan registrasi Lending Tracker - aplikasi pencatat pinjaman barang harian.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,70 +13,97 @@
     tailwind.config = {
       theme: {
         fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-        extend: { colors: { brand: '#0f62fe', brandHover: '#0353e9' } }
+        extend: {
+          colors: {
+            brand: '#0f62fe',
+            brandHover: '#0353e9',
+            danger: '#b91c1c',
+            success: '#15803d'
+          }
+        }
       }
     }
   </script>
+  <style>
+    /* WCAG focus indicator + reduced motion */
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 3px solid #0f62fe;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.18);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+  </style>
 </head>
-<body class="bg-zinc-50 min-h-screen grid items-center justify-center p-4 text-zinc-900">
-  <main class="w-[400px] bg-white border border-zinc-200 shadow-sm rounded-md p-6">
-    <div class="mb-6 border-b border-zinc-100 pb-4">
+<body class="bg-zinc-50 min-h-screen grid items-center justify-center p-4 text-zinc-900 font-sans">
+  <main class="w-full max-w-[420px] bg-white border border-zinc-300 shadow-sm rounded-md p-6" id="main-content">
+    <div class="mb-6 border-b border-zinc-200 pb-4">
       <h1 class="text-xl font-bold tracking-tight">Lending Tracker</h1>
-      <p class="text-sm text-zinc-500 mt-1">Platform pencatat pinjaman barang harian.</p>
+      <p class="text-sm text-zinc-700 mt-1">Platform pencatat pinjaman barang harian.</p>
     </div>
-    
-    <!-- Tabs -->
-    <div class="flex space-x-4 mb-6 border-b border-zinc-200" id="auth-tabs-container">
-      <button id="tab-login" class="pb-2 text-sm font-semibold border-b-2 border-brand text-brand">Masuk</button>
-      <button id="tab-register" class="pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-800">Daftar</button>
+
+    <!-- Tabs (ARIA tablist pattern) -->
+    <div class="flex space-x-4 mb-6 border-b border-zinc-300" id="auth-tabs-container" role="tablist" aria-label="Pilih mode">
+      <button id="tab-login" type="button" role="tab" aria-selected="true" aria-controls="login-form" class="pb-2 text-sm font-semibold border-b-2 border-brand text-brand">Masuk</button>
+      <button id="tab-register" type="button" role="tab" aria-selected="false" aria-controls="register-form" class="pb-2 text-sm font-medium border-b-2 border-transparent text-zinc-700 hover:text-zinc-900">Daftar</button>
     </div>
 
     <!-- Login Form -->
-    <form id="login-form" class="space-y-4 block">
+    <form id="login-form" class="space-y-4 block" role="tabpanel" aria-labelledby="tab-login" novalidate>
       <div>
-        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Email</label>
-        <input type="email" id="login-email" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm placeholder-zinc-400 bg-white">
+        <label for="login-email" class="block text-sm font-medium mb-1.5 text-zinc-800" data-required>Email</label>
+        <input type="email" id="login-email" name="email" autocomplete="email" required aria-required="true" aria-describedby="login-error" class="w-full px-3 py-2 rounded-md border border-zinc-400 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm placeholder-zinc-600 bg-white">
       </div>
       <div>
         <div class="flex justify-between items-center mb-1.5">
-          <label class="block text-sm font-medium text-zinc-700">Password</label>
-          <button type="button" id="link-forgot" class="text-xs font-medium text-brand hover:underline">Lupa password?</button>
+          <label for="login-password" class="block text-sm font-medium text-zinc-800" data-required>Password</label>
+          <button type="button" id="link-forgot" class="text-xs font-semibold text-brand hover:underline">Lupa password?</button>
         </div>
-        <input type="password" id="login-password" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+        <input type="password" id="login-password" name="current-password" autocomplete="current-password" required aria-required="true" aria-describedby="login-error" class="w-full px-3 py-2 rounded-md border border-zinc-400 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
       </div>
-      <div id="login-error" class="hidden text-sm p-2.5 rounded border"></div>
+      <div id="login-error" class="hidden text-sm p-2.5 rounded border" role="alert" aria-live="polite"></div>
       <button type="submit" class="w-full py-2 bg-brand hover:bg-brandHover text-white text-sm font-semibold rounded-md transition-colors mt-2">Masuk</button>
     </form>
 
     <!-- Register Form -->
-    <form id="register-form" class="space-y-4 hidden">
+    <form id="register-form" class="space-y-4 hidden" role="tabpanel" aria-labelledby="tab-register" novalidate>
       <div>
-        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Nama Lengkap</label>
-        <input type="text" id="register-name" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+        <label for="register-name" class="block text-sm font-medium mb-1.5 text-zinc-800" data-required>Nama Lengkap</label>
+        <input type="text" id="register-name" name="name" autocomplete="name" required aria-required="true" aria-describedby="register-error" class="w-full px-3 py-2 rounded-md border border-zinc-400 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Email</label>
-        <input type="email" id="register-email" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+        <label for="register-email" class="block text-sm font-medium mb-1.5 text-zinc-800" data-required>Email</label>
+        <input type="email" id="register-email" name="email" autocomplete="email" required aria-required="true" aria-describedby="register-error" class="w-full px-3 py-2 rounded-md border border-zinc-400 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Password</label>
-        <input type="password" id="register-password" required minlength="6" class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white" placeholder="Minimal 6 karakter">
+        <label for="register-password" class="block text-sm font-medium mb-1.5 text-zinc-800" data-required>Password</label>
+        <input type="password" id="register-password" name="new-password" autocomplete="new-password" required aria-required="true" minlength="6" aria-describedby="register-help register-error" class="w-full px-3 py-2 rounded-md border border-zinc-400 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white" placeholder="Minimal 6 karakter">
+        <p id="register-help" class="text-xs text-zinc-700 mt-1">Gunakan minimal 6 karakter, kombinasi huruf dan angka.</p>
       </div>
-      <div id="register-error" class="hidden text-sm p-2.5 rounded border"></div>
-      <button type="submit" class="w-full py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-semibold rounded-md transition-colors mt-2">Buat Akun</button>
-      <p class="text-xs text-zinc-500 mt-2 text-center">Tautan verifikasi akan dikirimkan ke email Anda setelah mendaftar.</p>
+      <div id="register-error" class="hidden text-sm p-2.5 rounded border" role="alert" aria-live="polite"></div>
+      <button type="submit" class="w-full py-2 bg-zinc-900 hover:bg-black text-white text-sm font-semibold rounded-md transition-colors mt-2">Buat Akun</button>
+      <p class="text-xs text-zinc-700 mt-2 text-center">Tautan verifikasi akan dikirimkan ke email Anda setelah mendaftar.</p>
     </form>
 
     <!-- Forgot Password Form -->
-    <form id="forgot-form" class="space-y-4 hidden">
-      <p class="text-sm text-zinc-600">Masukkan alamat email Anda yang terdaftar.</p>
+    <form id="forgot-form" class="space-y-4 hidden" aria-labelledby="forgot-heading" novalidate>
+      <h2 id="forgot-heading" class="text-base font-semibold text-zinc-900">Reset Password</h2>
+      <p class="text-sm text-zinc-700">Masukkan alamat email Anda yang terdaftar.</p>
       <div>
-        <label class="block text-sm font-medium mb-1.5 text-zinc-700">Email</label>
-        <input type="email" id="forgot-email" required class="w-full px-3 py-2 rounded-md border border-zinc-300 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
+        <label for="forgot-email" class="block text-sm font-medium mb-1.5 text-zinc-800" data-required>Email</label>
+        <input type="email" id="forgot-email" name="email" autocomplete="email" required aria-required="true" aria-describedby="forgot-error" class="w-full px-3 py-2 rounded-md border border-zinc-400 focus:border-brand focus:ring-1 focus:ring-brand outline-none text-sm bg-white">
       </div>
-      <div id="forgot-error" class="hidden text-sm p-2.5 rounded border"></div>
+      <div id="forgot-error" class="hidden text-sm p-2.5 rounded border" role="alert" aria-live="polite"></div>
       <button type="submit" class="w-full py-2 bg-brand hover:bg-brandHover text-white text-sm font-semibold rounded-md transition-colors">Reset Password</button>
-      <button type="button" id="btn-back-login" class="w-full py-2 bg-white border border-zinc-300 text-zinc-700 text-sm font-medium rounded-md hover:bg-zinc-50 mt-2">Kembali ke Login</button>
+      <button type="button" id="btn-back-login" class="w-full py-2 bg-white border border-zinc-400 text-zinc-800 text-sm font-medium rounded-md hover:bg-zinc-50 mt-2">Kembali ke Login</button>
     </form>
   </main>
   <script type="module" src="js/auth.js"></script>
