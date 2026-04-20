@@ -27,6 +27,10 @@
     </nav>
 
     <div class="sidebar-footer">
+      <div id="user-info" class="user-info" aria-live="polite">
+        <span class="user-info-label">Signed in as</span>
+        <span id="user-email" class="user-info-email">-</span>
+      </div>
       <button id="btn-signout" class="btn btn-outline" style="width: 100%;" type="button">
         Sign Out
       </button>
@@ -44,6 +48,14 @@
 
       <!-- Loans View -->
       <div id="loans-view" class="data-view" aria-labelledby="page-title">
+        <div class="view-toolbar">
+          <div class="stat-cards" id="loans-stats" aria-live="polite">
+            <div class="stat-card"><span class="stat-label">Total Loans</span><span class="stat-value" id="stat-loans-total">0</span></div>
+            <div class="stat-card"><span class="stat-label">Active</span><span class="stat-value" id="stat-loans-active">0</span></div>
+            <div class="stat-card stat-warn"><span class="stat-label">Overdue</span><span class="stat-value" id="stat-loans-overdue">0</span></div>
+          </div>
+          <button class="btn btn-outline" id="btn-export-loans" type="button">Export CSV</button>
+        </div>
         <table class="data-table" aria-label="Loans table">
           <thead>
             <tr>
@@ -63,6 +75,12 @@
 
       <!-- Contacts View -->
       <div id="contacts-view" class="data-view" style="display: none;" aria-labelledby="page-title">
+        <div class="view-toolbar">
+          <div class="stat-cards" aria-live="polite">
+            <div class="stat-card"><span class="stat-label">Total Contacts</span><span class="stat-value" id="stat-contacts-total">0</span></div>
+          </div>
+          <button class="btn btn-outline" id="btn-export-contacts" type="button">Export CSV</button>
+        </div>
         <table class="data-table" aria-label="Contacts table">
           <thead>
             <tr>
@@ -79,6 +97,13 @@
 
       <!-- Inventory View -->
       <div id="inventory-view" class="data-view" style="display: none;" aria-labelledby="page-title">
+        <div class="view-toolbar">
+          <div class="stat-cards" aria-live="polite">
+            <div class="stat-card"><span class="stat-label">Unique Items</span><span class="stat-value" id="stat-items-unique">0</span></div>
+            <div class="stat-card"><span class="stat-label">Total Stock</span><span class="stat-value" id="stat-items-qty">0</span></div>
+          </div>
+          <button class="btn btn-outline" id="btn-export-items" type="button">Export CSV</button>
+        </div>
         <table class="data-table" aria-label="Inventory table">
           <thead>
             <tr>

@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { openModal, closeModal, showToast } from './app.js';
+import { openModal, closeModal, showToast, downloadCSV } from './app.js';
 import { getContactsCache } from './contacts.js';
 import { getItemsCache } from './items.js';
 import {
@@ -40,7 +40,50 @@ function loadLoans() {
   onValue(loansRef, (snapshot) => {
     loansCache = snapshot.val() || {};
     renderLoansTable(loansCache);
+    renderLoansStats(loansCache);
   });
+}
+
+// Dashboard widget numbers: total, active (not yet returned),
+// and overdue (active + past due date). Computed on every realtime update.
+function renderLoansStats(data) {
+  const all = Object.values(data);
+  const total = all.length;
+  const active = all.filter(l => !l.returnedAt).length;
+  const now = new Date();
+  const overdue = all.filter(l => !l.returnedAt && l.dueDate && new Date(l.dueDate) < now).length;
+
+  const t = document.getElementById('stat-loans-total');
+  const a = document.getElementById('stat-loans-active');
+  const o = document.getElementById('stat-loans-overdue');
+  if (t) t.textContent = total;
+  if (a) a.textContent = active;
+  if (o) o.textContent = overdue;
+}
+
+function statusText(loan) {
+  if (loan.returnedAt) return 'Returned';
+  if (loan.dueDate && new Date(loan.dueDate) < new Date()) return 'Overdue';
+  return 'Borrowed';
+}
+
+function exportLoansCSV() {
+  const entries = Object.values(loansCache);
+  if (entries.length === 0) {
+    showToast('No loans to export.', 'error');
+    return;
+  }
+  const rows = [['Item', 'Borrower', 'Borrow Date', 'Due Date', 'Status', 'Returned At']];
+  entries.forEach(l => rows.push([
+    l.itemName || '',
+    l.borrowerName || '',
+    l.borrowDate || '',
+    l.dueDate || '',
+    statusText(l),
+    l.returnedAt || ''
+  ]));
+  downloadCSV(`loans-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  showToast('Loans CSV downloaded.');
 }
 
 function renderLoansTable(data) {
@@ -226,6 +269,8 @@ async function deleteLoan(id) {
 
 document.addEventListener('auth-ready', () => {
   loadLoans();
+  const btn = document.getElementById('btn-export-loans');
+  if (btn) btn.addEventListener('click', exportLoansCSV);
 });
 
 document.addEventListener('request-create', (e) => {

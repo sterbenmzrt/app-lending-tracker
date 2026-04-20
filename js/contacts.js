@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { openModal, closeModal, showToast } from './app.js';
+import { openModal, closeModal, showToast, downloadCSV } from './app.js';
 import {
   ref, push, set, update, remove, onValue
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -20,7 +20,25 @@ function loadContacts() {
   onValue(contactsRef, (snapshot) => {
     contactsCache = snapshot.val() || {};
     renderContactsTable(contactsCache);
+    renderContactsStats(contactsCache);
   });
+}
+
+function renderContactsStats(data) {
+  const el = document.getElementById('stat-contacts-total');
+  if (el) el.textContent = Object.keys(data).length;
+}
+
+function exportContactsCSV() {
+  const entries = Object.values(contactsCache);
+  if (entries.length === 0) {
+    showToast('No contacts to export.', 'error');
+    return;
+  }
+  const rows = [['Name', 'Phone', 'Created At']];
+  entries.forEach(c => rows.push([c.name || '', c.phone || '', c.createdAt || '']));
+  downloadCSV(`contacts-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  showToast('Contacts CSV downloaded.');
 }
 
 function renderContactsTable(data) {
@@ -136,6 +154,8 @@ export function getContactsCache() {
 
 document.addEventListener('auth-ready', () => {
   loadContacts();
+  const btn = document.getElementById('btn-export-contacts');
+  if (btn) btn.addEventListener('click', exportContactsCSV);
 });
 
 document.addEventListener('request-create', (e) => {

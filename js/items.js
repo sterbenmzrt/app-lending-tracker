@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { openModal, closeModal, showToast } from './app.js';
+import { openModal, closeModal, showToast, downloadCSV } from './app.js';
 import {
   ref, push, set, update, remove, onValue
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -18,7 +18,29 @@ function loadItems() {
   onValue(itemsRef, (snapshot) => {
     itemsCache = snapshot.val() || {};
     renderItemsTable(itemsCache);
+    renderItemsStats(itemsCache);
   });
+}
+
+function renderItemsStats(data) {
+  const values = Object.values(data);
+  const totalQty = values.reduce((sum, it) => sum + (parseInt(it.quantity, 10) || 0), 0);
+  const uniqueEl = document.getElementById('stat-items-unique');
+  const qtyEl = document.getElementById('stat-items-qty');
+  if (uniqueEl) uniqueEl.textContent = values.length;
+  if (qtyEl) qtyEl.textContent = totalQty;
+}
+
+function exportItemsCSV() {
+  const entries = Object.values(itemsCache);
+  if (entries.length === 0) {
+    showToast('No items to export.', 'error');
+    return;
+  }
+  const rows = [['Item Name', 'Quantity', 'Created At']];
+  entries.forEach(it => rows.push([it.name || '', it.quantity ?? 1, it.createdAt || '']));
+  downloadCSV(`inventory-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  showToast('Inventory CSV downloaded.');
 }
 
 function renderItemsTable(data) {
@@ -134,6 +156,8 @@ export function getItemsCache() {
 
 document.addEventListener('auth-ready', () => {
   loadItems();
+  const btn = document.getElementById('btn-export-items');
+  if (btn) btn.addEventListener('click', exportItemsCSV);
 });
 
 document.addEventListener('request-create', (e) => {

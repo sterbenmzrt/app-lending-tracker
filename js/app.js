@@ -1,6 +1,26 @@
 import { auth } from './firebase.js';
 import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
+// Generic CSV downloader. Rows is an array of arrays; the first row is treated
+// as the header. Every cell is RFC 4180-quoted so commas, quotes, and
+// newlines inside values survive Excel / Google Sheets import.
+export function downloadCSV(filename, rows) {
+  const escape = (v) => {
+    const s = String(v ?? '');
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const csv = rows.map(r => r.map(escape).join(',')).join('\r\n');
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 const VIEW_CONFIG = {
   loans:     { title: 'Loans',     action: '+ New Loan'    },
   contacts:  { title: 'Contacts',  action: '+ New Contact' },
@@ -65,6 +85,11 @@ export function showToast(message, type = 'success') {
 }
 
 document.addEventListener('auth-ready', () => {
+
+  const emailEl = document.getElementById('user-email');
+  if (emailEl && auth.currentUser) {
+    emailEl.textContent = auth.currentUser.email || '-';
+  }
 
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
